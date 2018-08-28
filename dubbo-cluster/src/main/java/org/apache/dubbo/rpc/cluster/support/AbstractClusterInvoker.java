@@ -24,12 +24,8 @@ import org.apache.dubbo.common.logger.Logger;
 import org.apache.dubbo.common.logger.LoggerFactory;
 import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.common.utils.NetUtils;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.RpcInvocation;
-import org.apache.dubbo.rpc.Result;
-import org.apache.dubbo.rpc.RpcException;
+import org.apache.dubbo.common.utils.StringUtils;
+import org.apache.dubbo.rpc.*;
 import org.apache.dubbo.rpc.cluster.Directory;
 import org.apache.dubbo.rpc.cluster.LoadBalance;
 import org.apache.dubbo.rpc.support.RpcUtils;
@@ -228,6 +224,10 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
 
         // binding attachments into invocation.
         Map<String, String> contextAttachments = RpcContext.getContext().getAttachments();
+        String applicationName = directory.getUrl().getParameter(Constants.APPLICATION_KEY);
+        if (StringUtils.isNotEmpty(applicationName)) {
+            contextAttachments.put(Constants.APPLICATION_NAME, applicationName);
+        }
         if (contextAttachments != null && contextAttachments.size() != 0) {
             ((RpcInvocation) invocation).addAttachments(contextAttachments);
         }
